@@ -161,13 +161,15 @@ class Blackjack
 	def blackjack_or_bust(player_or_dealer)
 		if player_or_dealer.total == BLACKJACK_AMOUNT
 			if player_or_dealer.is_a?(Dealer)
-				puts "Sorry, the Dealer hit Blackjack. #{player.name} lose :("
+				dealer.show_hand
+				puts "Sorry, the Dealer hit Blackjack. #{player.name} loses :("
 			else
 				puts "Blackjack! #{player.name} wins!"
 			end
-			exit
+			play_again
 		elsif player_or_dealer.busted?
 			if player_or_dealer.is_a?(Dealer)
+				dealer.show_hand
 				puts "The Dealer has busted. #{player.name} Wins!"
 			else
 				puts "#{player.name} busted! #{player.name} loses :("
@@ -183,6 +185,7 @@ class Blackjack
 		puts "#{player.name}'s turn."
 		
 		blackjack_or_bust(player)
+		
 		while !player.busted?
 			puts "Would #{player.name} like to 'Hit' or 'Stay'?"
 			response = gets.chomp
@@ -211,21 +214,24 @@ class Blackjack
 			puts "It's the Dealer's turn!"
 			
 			blackjack_or_bust(dealer)
+			
 			while dealer.total < DEALER_STAY_MIN
 				new_card = deck.deal
-				puts "Dealing a card to the dealer, #{new_card}."
+				puts "Dealer's new card is the #{new_card}."
 				dealer.add_card(new_card)
 							
 				blackjack_or_bust(dealer)
 			end
+			dealer.show_hand
 			puts "The Dealer stays at #{dealer.total}."
 		end
 	
 	
-	def who_won
+	def who_won(player, dealer)
 		if player.total > dealer.total
 			puts "Congratulations! #{player.name} wins!"
 		elsif player.total < dealer.total
+			dealer.show_hand
 			puts "The Dealer wins. #{player.name} loses :("
 		else
 			puts "It's a tie!"
@@ -257,7 +263,7 @@ class Blackjack
 		show_flop
 		player_turn
 		dealer_turn
-		who_won?(player, dealer)
+		who_won(player, dealer)
 	end
 end
 
